@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laser Freeze Challenge</title>
+    <style>
+        body { margin: 0; background: #111; color: white; font-family: sans-serif; overflow: hidden; text-align: center; }
+        
+        #game-container { position: relative; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+        /* Camera Feed Mirror */
+        #camera-preview { 
+            position: absolute; top: 10px; right: 10px; width: 100px; height: 100px; 
+            border: 2px solid #0f0; background: #222; border-radius: 8px; overflow: hidden;
+        }
+        #camera-preview div { font-size: 10px; color: #0f0; margin-top: 40px; }
+
+        /* Status & UI */
+        #status-light { width: 100px; height: 100px; border-radius: 50%; margin: 20px; transition: 0.3s; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .go { background: #00ff00; box-shadow: 0 0 40px #00ff00 !important; }
+        .freeze { background: #ff0000; box-shadow: 0 0 40px #ff0000 !important; }
+
+        #score-display { font-size: 2rem; font-weight: bold; }
+        
+        /* Laser Animation */
+        #laser { 
+            display: none; position: absolute; top: 50%; left: 0; width: 100%; height: 10px; 
+            background: red; box-shadow: 0 0 20px red; z-index: 10; animation: flicker 0.1s infinite;
+        }
+
+        @keyframes flicker { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        button { 
+            padding: 20px 40px; font-size: 1.5rem; border: none; border-radius: 50px; 
+            background: #fff; cursor: pointer; transition: 0.1s; user-select: none;
+        }
+        button:active { transform: scale(0.9); background: #ccc; }
+
+        #overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.8); display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="overlay">
+        <h1>LASER SENSOR GAME</h1>
+        <p>Mash button on GREEN.<br>FREEZE phone on RED.</p>
+        <button onclick="startGame()">START GAME</button>
+    </div>
+
+    <div id="game-container">
+        <div id="camera-preview">
+            <div>REC ●</div>
+        </div>
+
+        <div id="status-light" class="go"></div>
+        <div id="score-display">Score: 0</div>
+        
+        <p id="instruction">MASH THE BUTTON!</p>
+        <button id="mash-btn" onpointerdown="mash()">MASH!</button>
+
+        <div id="laser"></div>
+    </div>
+
+    <script>
+        let score = 0;
+        let isFreezePhase = false;
+        let gameActive = false;
+        const statusLight = document.getElementById('status-light');
+        const scoreDisplay = document.getElementById('score-display');
+        const laser = document.getElementById('laser');
+        const instruction = document.getElementById('instruction');
+
+        // Request Sensor Permission (for iOS/Modern Android)
+        function startGame() {
+            if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                DeviceMotionEvent.requestPermission()
+                    .then(response => {
+                        if (response == 'granted') {
+                            initGame();
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                initGame();
+            }
+        }
+
+        function initGame() {
+            document.getElementById('overlay').style.display = 'none';
+            gameActive = true;
+            score = 0;
+            scoreDisplay.innerText = "Score: 0";
+            gameLoop();
+        }
+
+        function gameLoop() {
+            if (!gameActive) return;
+
+            const nextChange = isFreezePhase ? (Math.random() * 3000 + 2000) : (Math.random() * 4000 + 1000);
+            
+            setTimeout(() => {
+                isFreezePhase = !isFreezePhase;
+                
+                if (isFreezePhase) {
+                    statusLight.className = 'freeze';
+                    instruction.innerText = "DON'T MOVE!";
+                    // Buzzer sound simulation
+                    console.log("ALARM!"); 
+                } else {
+                    statusLight.className = 'go';
+                    instruction.innerText = "MASH THE BUTTON!";
+                }
+                
+                gameLoop();
+            }, nextChange);
+        }
+
+        function mash() {
+            if (!gameActive) return;
+            
+            if (isFreezePhase) {
+                gameOver("Moved while on Red Light!");
+            } else {
+                score++;
+                scoreDisplay.innerText = "Score: " + score;
+            }
+        }
+
+        // Accelerometer Check
+        window.addEventListener('devicemotion', (event) => {
+            if (!gameActive || !isFreezePhase) return;
+
+            const acc = event.accelerationIncludingGravity;
+            const movement = Math.abs(acc.x) + Math.abs(acc.y) + Math.abs(acc.z);
+
+            // Threshold: 15 is standard gravity (~9.8) + slight movement
+            // Kapag lumampas sa threshold habang freeze phase, patay.
+            if (movement > 13) { 
+                gameOver("Motion Detected!");
+            }
+        });
+
+        function gameOver(reason) {
+            gameActive = false;
+            laser.style.display = 'block';
+            instruction.innerText = "GAME OVER: " + reason;
+            
+            setTimeout(() => {
+                alert("Game Over! Score: " + score);
+                location.reload();
+            }, 500);
+        }
+    </script>
+</body>
+</html>
