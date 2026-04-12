@@ -1,242 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SECRET LAND | REGISTRATION</title>
-    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <style>
-        :root {
-            --red: #ff0000;
-            --black: #050505;
-            --white: #ffffff;
-            --gray: #1a1a1a;
-        }
+<meta charset="UTF-8">
+<title>IDENTITY PROTOCOL</title>
 
-        body {
-            background-color: var(--black);
-            color: var(--white);
-            font-family: 'Courier Prime', monospace;
-            margin: 0;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
 
-        /* Borderland Design */
-        #game-box {
-            width: 90%;
-            max-width: 450px;
-            border: 3px solid var(--red);
-            padding: 30px;
-            text-align: center;
-            background: linear-gradient(145deg, #0a0a0a, #111);
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
-            position: relative;
-        }
+<style>
+body {
+    margin:0;
+    background:black;
+    color:white;
+    font-family:'Special Elite', monospace;
+}
 
-        h1 {
-            font-size: 1.5rem;
-            color: var(--red);
-            letter-spacing: 4px;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px #000;
-        }
+.screen {
+    display:none;
+    height:100vh;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+}
 
-        .screen {
-            display: none;
-            opacity: 0;
-            transition: opacity 0.8s ease-in-out;
-        }
+.active { display:flex; }
 
-        .active {
-            display: block;
-            opacity: 1;
-        }
+h1 { color:red; letter-spacing:3px; }
 
-        #video-feed {
-            width: 100%;
-            background: #000;
-            border: 1px solid var(--red);
-            transform: scaleX(-1); /* Mirror view */
-        }
+button {
+    background:black;
+    border:2px solid red;
+    color:white;
+    padding:10px 15px;
+    margin:5px;
+    cursor:pointer;
+}
 
-        #captured-image {
-            width: 100%;
-            border: 1px solid var(--white);
-            display: none;
-        }
-
-        .id-card {
-            background: var(--white);
-            color: var(--black);
-            padding: 20px;
-            margin: 20px 0;
-            font-weight: bold;
-        }
-
-        .player-id {
-            font-size: 3.5rem;
-            color: var(--red);
-            display: block;
-        }
-
-        button {
-            background: var(--red);
-            color: var(--white);
-            border: none;
-            padding: 15px 30px;
-            font-family: 'Courier Prime', monospace;
-            font-size: 1rem;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 15px;
-            transition: 0.3s;
-            text-transform: uppercase;
-        }
-
-        button:hover {
-            background: var(--white);
-            color: var(--red);
-            box-shadow: 0 0 15px var(--white);
-        }
-
-        button:disabled {
-            background: #333;
-            cursor: not-allowed;
-        }
-
-        canvas { display: none; }
-    </style>
+video, canvas {
+    width:300px;
+    height:220px;
+    border:2px solid white;
+}
+</style>
 </head>
+
 <body>
 
-    <div id="game-box">
-        <div id="step-1" class="screen active">
-            <h1>IDENTIFICATION</h1>
-            <video id="video-feed" autoplay playsinline></video>
-            <button onclick="captureImage()">CAPTURE FACE</button>
-        </div>
+<!-- SCREEN 1 -->
+<div id="s1" class="screen active">
+    <h1>IDENTITY PROTOCOL</h1>
+    <button onclick="next(2)">START SCAN</button>
+</div>
 
-        <div id="step-2" class="screen">
-            <h1>CONFIRM IDENTITY</h1>
-            <img id="captured-image" src="">
-            <button id="send-btn" onclick="sendData()">UPLOAD TO LAND</button>
-        </div>
+<!-- CAMERA -->
+<div id="s2" class="screen">
+    <h1>FACE CAPTURE</h1>
 
-        <div id="step-3" class="screen">
-            <h1>REGISTRATION COMPLETE</h1>
-            <div class="id-card">
-                PLAYER NUMBER
-                <span id="player-num-display" class="player-id">--</span>
-            </div>
-            <p style="font-size: 0.8rem;">DATA TRANSMITTED TO SYSTEM.</p>
-            <button onclick="nextPlayer()">NEXT PLAYER</button>
-        </div>
-    </div>
-
-    <audio id="snd-click" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
-    <audio id="snd-success" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"></audio>
-
+    <video id="video" autoplay></video>
     <canvas id="canvas"></canvas>
 
-    <script>
-        // Initialize EmailJS
-        emailjs.init("A996XaJv7m7qD29bh");
+    <button onclick="capture()">CAPTURE</button>
+    <button onclick="download()">DOWNLOAD</button>
+    <button onclick="next(3)">CONFIRM</button>
+</div>
 
-        const video = document.getElementById('video-feed');
-        const canvas = document.getElementById('canvas');
-        const capturedImg = document.getElementById('captured-image');
-        const sndClick = document.getElementById('snd-click');
-        const sndSuccess = document.getElementById('snd-success');
+<!-- RESULT -->
+<div id="s3" class="screen">
+    <h1>ASSIGNING ID</h1>
+    <h2 id="pid"></h2>
 
-        let playerCount = 0;
-        let base64Image = "";
+    <button onclick="send()">SEND TO SYSTEM</button>
+</div>
 
-        // Start Camera
-        async function startCamera() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                video.srcObject = stream;
-            } catch (err) {
-                alert("Camera access required for identification.");
-            }
-        }
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
 
-        function playSound(snd) {
-            snd.currentTime = 0;
-            snd.play();
-        }
+<script>
+let stream;
+let imgData = "";
+let playerId = "";
 
-        function switchScreen(from, to) {
-            document.getElementById(`step-${from}`).classList.remove('active');
-            setTimeout(() => {
-                document.getElementById(`step-${to}`).classList.add('active');
-            }, 100);
-        }
+navigator.mediaDevices.getUserMedia({ video:true })
+.then(s=>{
+    stream = s;
+    document.getElementById("video").srcObject = s;
+});
 
-        function captureImage() {
-            playSound(sndClick);
-            // Low quality capture (Small Resolution)
-            canvas.width = 300; 
-            canvas.height = 225;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            // 0.1 Quality = ~20KB
-            base64Image = canvas.toDataURL('image/jpeg', 0.1); 
-            capturedImg.src = base64Image;
-            capturedImg.style.display = "block";
-            
-            switchScreen(1, 2);
-        }
+function next(n){
+    document.querySelectorAll(".screen").forEach(e=>e.classList.remove("active"));
+    document.getElementById("s"+n).classList.add("active");
 
-        function sendData() {
-            if (playerCount >= 40) return alert("Game is full.");
-            
-            playSound(sndClick);
-            const sendBtn = document.getElementById('send-btn');
-            sendBtn.disabled = true;
-            sendBtn.innerText = "TRANSMITTING...";
+    if(n===3){
+        playerId = String(Math.floor(Math.random()*51)).padStart(2,'0');
+        document.getElementById("pid").innerText = "PLAYER ID: " + playerId;
+    }
+}
 
-            // Generate Number 00-50
-            const assignedNumber = Math.floor(Math.random() * 51).toString().padStart(2, '0');
+function capture(){
+    let c = document.getElementById("canvas");
+    let v = document.getElementById("video");
 
-            const params = {
-                player_number: assignedNumber,
-                player_image: base64Image,
-                to_email: 'refuerzojay7@gmail.com'
-            };
+    let ctx = c.getContext("2d");
 
-            emailjs.send('service_cogemsd', 'template_9ag720q', params)
-                .then(() => {
-                    playSound(sndSuccess);
-                    document.getElementById('player-num-display').innerText = assignedNumber;
-                    playerCount++;
-                    switchScreen(2, 3);
-                })
-                .catch((err) => {
-                    alert("System Error. Try again.");
-                    sendBtn.disabled = false;
-                    sendBtn.innerText = "UPLOAD TO LAND";
-                });
-        }
+    // FORCE SMALL SIZE (important for low KB)
+    c.width = 240;
+    c.height = 180;
 
-        function nextPlayer() {
-            playSound(sndClick);
-            if (playerCount < 40) {
-                switchScreen(3, 1);
-                document.getElementById('send-btn').disabled = false;
-                document.getElementById('send-btn').innerText = "UPLOAD TO LAND";
-            } else {
-                alert("MAX PLAYERS REACHED.");
-            }
-        }
+    ctx.drawImage(v,0,0,240,180);
 
-        startCamera();
-    </script>
+    // VERY LOW QUALITY JPEG
+    imgData = c.toDataURL("image/jpeg",0.25);
+}
+
+function download(){
+    let a = document.createElement("a");
+    a.href = imgData;
+    a.download = "identity_low.jpg";
+    a.click();
+}
+
+emailjs.init("A996XaJv7m7qD29bh");
+
+function send(){
+    emailjs.send("service_cogemsd","template_o1tuhqg",{
+        player_id: playerId,
+        message: "Border Identity Registered",
+        image_base64: imgData
+    })
+    .then(()=>alert("SENT"))
+    .catch(()=>alert("ERROR"));
+}
+</script>
+
 </body>
 </html>
