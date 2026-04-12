@@ -1,134 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>IDENTITY PROTOCOL</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
-
-<style>
-body {
-    margin:0;
-    background:black;
-    color:white;
-    font-family:'Special Elite', monospace;
-}
-
-.screen {
-    display:none;
-    height:100vh;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
-}
-
-.active { display:flex; }
-
-h1 { color:red; letter-spacing:3px; }
-
-button {
-    background:black;
-    border:2px solid red;
-    color:white;
-    padding:10px 15px;
-    margin:5px;
-    cursor:pointer;
-}
-
-video, canvas {
-    width:300px;
-    height:220px;
-    border:2px solid white;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borderland Photo Capture</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        #capture-area {
+            border: 5px dashed #333;
+            padding: 20px;
+            background-color: #fff;
+            text-align: center;
+        }
+        #photo {
+            width: 200px;
+            height: 150px;
+            background-color: #e0e0e0;
+            margin: 10px auto;
+        }
+        #random-number {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+    </style>
 </head>
-
 <body>
+    <div id="capture-area">
+        <h1>Capture Your Photo</h1>
+        <div id="photo">Your Photo Here</div>
+        <div id="random-number">Random Number: <span id="number"></span></div>
+        <button id="capture-button">Capture Photo</button>
+    </div>
 
-<!-- SCREEN 1 -->
-<div id="s1" class="screen active">
-    <h1>IDENTITY PROTOCOL</h1>
-    <button onclick="next(2)">START SCAN</button>
-</div>
+    <script>
+        document.getElementById('capture-button').addEventListener('click', function() {
+            const randomNumber = Math.floor(Math.random() * 10000);
+            document.getElementById('number').innerText = randomNumber;
 
-<!-- CAMERA -->
-<div id="s2" class="screen">
-    <h1>FACE CAPTURE</h1>
-
-    <video id="video" autoplay></video>
-    <canvas id="canvas"></canvas>
-
-    <button onclick="capture()">CAPTURE</button>
-    <button onclick="download()">DOWNLOAD</button>
-    <button onclick="next(3)">CONFIRM</button>
-</div>
-
-<!-- RESULT -->
-<div id="s3" class="screen">
-    <h1>ASSIGNING ID</h1>
-    <h2 id="pid"></h2>
-
-    <button onclick="send()">SEND TO SYSTEM</button>
-</div>
-
-<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-
-<script>
-let stream;
-let imgData = "";
-let playerId = "";
-
-navigator.mediaDevices.getUserMedia({ video:true })
-.then(s=>{
-    stream = s;
-    document.getElementById("video").srcObject = s;
-});
-
-function next(n){
-    document.querySelectorAll(".screen").forEach(e=>e.classList.remove("active"));
-    document.getElementById("s"+n).classList.add("active");
-
-    if(n===3){
-        playerId = String(Math.floor(Math.random()*51)).padStart(2,'0');
-        document.getElementById("pid").innerText = "PLAYER ID: " + playerId;
-    }
-}
-
-function capture(){
-    let c = document.getElementById("canvas");
-    let v = document.getElementById("video");
-
-    let ctx = c.getContext("2d");
-
-    // FORCE SMALL SIZE (important for low KB)
-    c.width = 240;
-    c.height = 180;
-
-    ctx.drawImage(v,0,0,240,180);
-
-    // VERY LOW QUALITY JPEG
-    imgData = c.toDataURL("image/jpeg",0.25);
-}
-
-function download(){
-    let a = document.createElement("a");
-    a.href = imgData;
-    a.download = "identity_low.jpg";
-    a.click();
-}
-
-emailjs.init("A996XaJv7m7qD29bh");
-
-function send(){
-    emailjs.send("service_cogemsd","template_o1tuhqg",{
-        player_id: playerId,
-        message: "Border Identity Registered",
-        image_base64: imgData
-    })
-    .then(()=>alert("SENT"))
-    .catch(()=>alert("ERROR"));
-}
-</script>
-
+            // Simulate sending email (this part requires server-side implementation)
+            const email = "johncris226655@gmail.com";
+            const photoData = "data:image/jpeg;base64,..."; // Placeholder for low-quality image data
+            console.log(`Sending photo to ${email} with random number ${randomNumber}`);
+        });
+    </script>
 </body>
 </html>
