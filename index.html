@@ -1,53 +1,213 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fil">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Borderland Photo Capture</title>
+    <title>System Entrance</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=JetBrains+Mono:wght@300&display=swap');
+
         body {
+            background-color: #050505;
+            color: #e0e0e0;
+            font-family: 'JetBrains+Mono', monospace;
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f0f0f0;
+            overflow: hidden;
         }
-        #capture-area {
-            border: 5px dashed #333;
-            padding: 20px;
-            background-color: #fff;
+
+        #main-container {
+            width: 85%;
+            max-width: 450px;
             text-align: center;
+            border: 1px solid #222;
+            padding: 40px;
+            background: #0a0a0a;
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.1);
+            position: relative;
         }
-        #photo {
-            width: 200px;
-            height: 150px;
-            background-color: #e0e0e0;
-            margin: 10px auto;
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            letter-spacing: 6px;
+            color: #ff0000;
+            margin-bottom: 25px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
         }
-        #random-number {
-            font-size: 24px;
-            margin: 10px 0;
+
+        .instructions {
+            font-size: 0.75rem;
+            line-height: 1.8;
+            color: #999;
+            margin-bottom: 30px;
+            text-align: left;
+            border-left: 3px solid #ff0000;
+            padding-left: 15px;
+            background: rgba(255, 0, 0, 0.02);
+        }
+
+        button {
+            background: transparent;
+            border: 1px solid #ff0000;
+            color: #ff0000;
+            padding: 15px 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            width: 100%;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background: #ff0000;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+        }
+
+        video, canvas {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border: 1px solid #333;
+            margin: 20px 0;
+            background: #000;
+            object-fit: cover;
+        }
+
+        .id-display {
+            font-size: 1.8rem;
+            color: #fff;
+            margin: 15px 0;
+            letter-spacing: 4px;
+            background: #111;
+            padding: 10px;
+            border: 1px dashed #444;
+        }
+
+        .hidden { display: none; }
+
+        .processing {
+            pointer-events: none;
+            opacity: 0.6;
+            border-color: #555;
+            color: #555;
         }
     </style>
 </head>
 <body>
-    <div id="capture-area">
-        <h1>Capture Your Photo</h1>
-        <div id="photo">Your Photo Here</div>
-        <div id="random-number">Random Number: <span id="number"></span></div>
-        <button id="capture-button">Capture Photo</button>
+
+<div id="main-container">
+    <div id="welcome-screen">
+        <h1 id="title-header">PHASE ONE</h1>
+        <div class="instructions">
+            [SYSTEM PROTOCOLS]:<br>
+            > PROVIDE CLEAR IDENTIFICATION.<br>
+            > 1:1 ASPECT RATIO PHOTO REQUIRED.<br>
+            > DATA WILL BE SENT TO ENCRYPTED SERVER.<br>
+            > ONCE REGISTERED, ACTION IS PERMANENT.
+        </div>
+        <button onclick="startProcess()">GET YOUR ID</button>
     </div>
 
-    <script>
-        document.getElementById('capture-button').addEventListener('click', function() {
-            const randomNumber = Math.floor(Math.random() * 10000);
-            document.getElementById('number').innerText = randomNumber;
+    <div id="camera-section" class="hidden">
+        <div class="id-display" id="id-num">ID: ------</div>
+        <video id="webcam" autoplay playsinline></video>
+        <canvas id="canvas" class="hidden"></canvas>
+        
+        <button id="snap-btn" onclick="takeSnapshot()">CAPTURE IMAGE</button>
+        <button id="reg-btn" class="hidden" onclick="submitData()">REGISTER YOUR ID</button>
+    </div>
+</div>
 
-            // Simulate sending email (this part requires server-side implementation)
-            const email = "johncris226655@gmail.com";
-            const photoData = "data:image/jpeg;base64,..."; // Placeholder for low-quality image data
-            console.log(`Sending photo to ${email} with random number ${randomNumber}`);
+<script>
+    // Initialize EmailJS
+    (function() {
+        emailjs.init("NCqicqr14H_Zg96b6");
+    })();
+
+    let generatedID = "";
+    let photoData = "";
+
+    function startProcess() {
+        document.getElementById('welcome-screen').classList.add('hidden');
+        document.getElementById('camera-section').classList.remove('hidden');
+
+        // Generate Random ID
+        generatedID = "R-" + Math.floor(100000 + Math.random() * 900000);
+        document.getElementById('id-num').innerText = generatedID;
+
+        // Start Camera
+        const video = document.getElementById('webcam');
+        navigator.mediaDevices.getUserMedia({ 
+            video: { 
+                facingMode: "user",
+                width: { ideal: 400 },
+                height: { ideal: 400 },
+                aspectRatio: 1 
+            } 
+        })
+        .then(stream => { video.srcObject = stream; })
+        .catch(err => { 
+            alert("SYSTEM ERROR: Camera access is mandatory."); 
         });
-    </script>
+    }
+
+    function takeSnapshot() {
+        const video = document.getElementById('webcam');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+
+        // Set size to 300x300 (Small enough for EmailJS limits)
+        canvas.width = 300;
+        canvas.height = 300;
+        context.drawImage(video, 0, 0, 300, 300);
+
+        // Compress image to 50% quality
+        photoData = canvas.toDataURL('image/jpeg', 0.5); 
+        
+        video.classList.add('hidden');
+        canvas.classList.remove('hidden');
+        document.getElementById('snap-btn').innerText = "RETAKE PHOTO";
+        document.getElementById('reg-btn').classList.remove('hidden');
+    }
+
+    function submitData() {
+        const regBtn = document.getElementById('reg-btn');
+        const snapBtn = document.getElementById('snap-btn');
+        
+        regBtn.innerText = "UPLOADING DATA...";
+        regBtn.classList.add('processing');
+        snapBtn.classList.add('hidden');
+
+        const params = {
+            id_number: generatedID,
+            player_photo: photoData,
+            to_email: 'refuerzojay7@gmail.com'
+        };
+
+        emailjs.send('service_lj9c0uo', 'template_3ctf45c', params)
+            .then(() => {
+                regBtn.innerText = "SUCCESSFULLY REGISTERED";
+                setTimeout(() => {
+                    alert("ID REGISTERED. WELCOME TO THE SYSTEM.");
+                    location.reload();
+                }, 1000);
+            })
+            .catch((err) => {
+                console.error("FAILED:", err);
+                alert("UPLOAD FAILED. PLEASE CHECK YOUR CONNECTION.");
+                regBtn.innerText = "REGISTER YOUR ID";
+                regBtn.classList.remove('processing');
+                snapBtn.classList.remove('hidden');
+            });
+    }
+</script>
+
 </body>
 </html>
