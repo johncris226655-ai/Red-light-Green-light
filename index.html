@@ -2,127 +2,95 @@
 <html lang="fil">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PROJECT X | SYSTEM ENTRANCE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PROJECT X</title>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=JetBrains+Mono:wght@300&display=swap');
 
-        * { box-sizing: border-box; outline: none; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        body {
-            background-color: #000;
-            color: #e0e0e0;
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #000; color: #fff;
             font-family: 'JetBrains+Mono', monospace;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            width: 100vw;
             overflow: hidden;
-            background-image: radial-gradient(circle, #1a0000 0%, #000 80%);
-        }
-
-        /* Glitch Animation for Title */
-        .glitch {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.2rem;
-            letter-spacing: 8px;
-            color: #ff0000;
-            text-shadow: 2px 2px #550000;
-            animation: glitch-anim 3s infinite;
-        }
-
-        @keyframes glitch-anim {
-            0% { transform: translate(0); }
-            2% { transform: translate(-2px, 2px); }
-            4% { transform: translate(2px, -2px); }
-            6% { transform: translate(0); }
         }
 
         #main-container {
-            width: 100%;
-            height: 100%;
-            max-width: 500px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 30px;
-            border: 1px solid #300;
-            background: rgba(5, 5, 5, 0.9);
-            box-shadow: inset 0 0 100px rgba(255, 0, 0, 0.1);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 20px;
+            background: radial-gradient(circle at center, #1a0000 0%, #000 100%);
+            position: relative;
+        }
+
+        /* Borderland HUD effect */
+        #main-container::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border: 2px solid rgba(255, 0, 0, 0.1); pointer-events: none;
+            box-shadow: inset 0 0 50px rgba(255, 0, 0, 0.2);
         }
 
         .screen {
-            width: 100%;
-            animation: fadeIn 1.5s ease;
+            width: 100%; max-width: 380px;
+            text-align: center;
+            animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); filter: blur(5px); }
-            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.9); filter: blur(10px); }
+            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 2rem;
+            color: #ff0000; letter-spacing: 5px; margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
         }
 
         .instructions {
-            font-size: 0.8rem;
-            line-height: 1.8;
-            color: #888;
-            margin: 25px 0;
-            text-align: left;
-            border-left: 2px solid #ff0000;
-            padding: 15px;
-            background: rgba(255, 0, 0, 0.03);
+            font-size: 0.75rem; color: #888; text-align: left;
+            border-left: 2px solid #ff0000; padding: 15px;
+            background: rgba(255, 0, 0, 0.05); margin-bottom: 30px;
         }
 
-        /* Form Styling */
         input {
-            width: 100%;
-            background: #111;
-            border: 1px solid #333;
-            color: #fff;
-            padding: 12px;
-            margin-bottom: 15px;
-            font-family: 'JetBrains+Mono';
-            text-align: center;
-            border-radius: 0;
+            width: 100%; background: #0a0a0a; border: 1px solid #333;
+            color: #fff; padding: 15px; margin-bottom: 15px;
+            font-family: 'JetBrains+Mono'; font-size: 1rem;
+            transition: 0.3s; border-radius: 4px;
         }
 
-        input:focus { border-color: #ff0000; box-shadow: 0 0 10px rgba(255, 0, 0, 0.2); }
+        input:focus { border-color: #ff0000; box-shadow: 0 0 10px rgba(255, 0, 0, 0.3); }
 
         button {
-            background: #000;
-            border: 1px solid #ff0000;
-            color: #ff0000;
-            padding: 18px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: 0.3s;
-            width: 100%;
-            letter-spacing: 3px;
+            width: 100%; background: transparent; border: 1px solid #ff0000;
+            color: #ff0000; padding: 18px; font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem; cursor: pointer; letter-spacing: 2px;
+            position: relative; overflow: hidden; transition: 0.2s;
         }
 
-        button:hover { background: #ff0000; color: #fff; box-shadow: 0 0 30px #ff0000; }
+        button:active { background: #ff0000; color: #fff; transform: scale(0.98); }
 
         video, canvas {
-            width: 100%;
-            aspect-ratio: 1/1;
-            border: 1px solid #ff0000;
-            margin: 15px 0;
-            background: #000;
-            object-fit: cover;
+            width: 100%; max-width: 300px; aspect-ratio: 1/1;
+            border: 1px solid #ff0000; margin-bottom: 20px;
+            background: #050505; object-fit: cover;
         }
 
-        .id-display {
-            font-size: 1.5rem;
-            color: #fff;
-            margin-bottom: 10px;
-            background: #1a1a1a;
-            padding: 10px;
-            border: 1px dashed #555;
+        .id-label {
+            font-size: 1.4rem; font-weight: bold; margin-bottom: 15px;
+            color: #fff; letter-spacing: 3px;
+        }
+
+        /* Success Overlay */
+        #success-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 100;
+            display: none;
         }
 
         .hidden { display: none !important; }
@@ -132,115 +100,131 @@
 
 <div id="main-container">
     <div id="welcome-screen" class="screen">
-        <h1 class="glitch">PROJECT X</h1>
+        <h1>PROJECT X</h1>
         <div class="instructions">
-            [PROTOCOLS]:<br>
-            > PROVIDE PERSONAL DATA.<br>
-            > CAPTURE 1:1 BIOMETRIC PHOTO.<br>
-            > REGISTRATION IS IRREVERSIBLE.
+            PROTOCOL 01: BIOMETRIC AUTHENTICATION<br>
+            STATUS: WAITING FOR INPUT...
         </div>
-        <button onclick="enterFullScreen(); startRegistration();">ENTER SYSTEM</button>
+        <button onclick="handleStart()">INITIATE SYSTEM</button>
     </div>
 
     <div id="data-screen" class="screen hidden">
-        <h2 style="color: #ff0000; letter-spacing: 3px;">CITIZEN DATA</h2>
-        <input type="text" id="player-name" placeholder="FULL NAME" autocomplete="off">
-        <input type="number" id="player-age" placeholder="AGE" autocomplete="off">
-        <button onclick="startCamera()">NEXT: BIOMETRICS</button>
+        <h1>DATA ENTRY</h1>
+        <input type="text" id="p-name" placeholder="IDENTIFICATION NAME">
+        <input type="number" id="p-age" placeholder="AGE">
+        <button onclick="handleDataSubmit()">GENERATE ID</button>
     </div>
 
-    <div id="camera-section" class="screen hidden">
-        <div class="id-display" id="id-num">ID: ------</div>
+    <div id="camera-screen" class="screen hidden">
+        <div class="id-label" id="id-tag">ID: ------</div>
         <video id="webcam" autoplay playsinline></video>
         <canvas id="canvas" class="hidden"></canvas>
-        <button id="snap-btn" onclick="takeSnapshot()">CAPTURE BIOMETRICS</button>
-        <button id="reg-btn" class="hidden" onclick="submitData()">FINALIZE REGISTRATION</button>
+        <button id="snap-btn" onclick="handleCapture()">CAPTURE</button>
+        <button id="reg-btn" class="hidden" onclick="handleFinalSubmit()">FINALIZE</button>
     </div>
+</div>
+
+<div id="success-overlay">
+    <h1 style="font-size: 1.5rem;">REGISTRATION COMPLETE</h1>
+    <p id="final-msg" style="color: #ff0000; font-size: 1.2rem;"></p>
 </div>
 
 <script>
     (function() { emailjs.init("NCqicqr14H_Zg96b6"); })();
 
-    let generatedID = "";
-    let photoData = "";
+    let pID = "";
+    let photo = "";
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-    // AI VOICE FUNCTION
+    // SOUND EFFECTS ENGINE
+    function playSound(type) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        if (type === 'click') {
+            osc.type = 'square'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+        } else if (type === 'success') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.2);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+        }
+    }
+
+    // AI VOICE ENGINE (Human-like settings)
     function speak(text) {
-        const msg = new SpeechSynthesisUtterance();
-        msg.text = text;
-        msg.rate = 0.9;
-        msg.pitch = 0.8;
-        window.speechSynthesis.speak(msg);
+        const synth = window.speechSynthesis;
+        const utter = new SpeechSynthesisUtterance(text);
+        const voices = synth.getVoices();
+        // Try to find a more natural voice
+        utter.voice = voices.find(v => v.lang.includes('en-GB')) || voices[0];
+        utter.rate = 0.85; 
+        utter.pitch = 0.7;
+        synth.speak(utter);
     }
 
-    function enterFullScreen() {
-        const elem = document.documentElement;
-        if (elem.requestFullscreen) elem.requestFullscreen();
-        else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-    }
-
-    function startRegistration() {
+    function handleStart() {
+        playSound('click');
+        const doc = document.documentElement;
+        if (doc.requestFullscreen) doc.requestFullscreen();
         document.getElementById('welcome-screen').classList.add('hidden');
         document.getElementById('data-screen').classList.remove('hidden');
-        speak("Welcome to Project X. Please enter your name and age.");
+        speak("Welcome to Project X. Input your identification name and age to proceed.");
     }
 
-    function startCamera() {
-        const name = document.getElementById('player-name').value;
-        const age = document.getElementById('player-age').value;
-
-        if(!name || !age) {
-            alert("System requires data.");
-            return;
-        }
-
+    function handleDataSubmit() {
+        const name = document.getElementById('p-name').value;
+        if (!name) return;
+        playSound('click');
         document.getElementById('data-screen').classList.add('hidden');
-        document.getElementById('camera-section').classList.remove('hidden');
+        document.getElementById('camera-screen').classList.remove('hidden');
         
-        generatedID = "X-" + Math.floor(100000 + Math.random() * 900000);
-        document.getElementById('id-num').innerText = generatedID;
+        pID = "R-" + Math.floor(10000 + Math.random() * 90000);
+        document.getElementById('id-tag').innerText = pID;
 
-        speak("Citizenship ID generated. Provide clear identification photo.");
+        speak("Identification name recorded. Your ID is " + pID.split('').join(' ') + ". Capture your biometric photo.");
 
-        const video = document.getElementById('webcam');
-        navigator.mediaDevices.getUserMedia({ 
-            video: { facingMode: "user", aspectRatio: 1 } 
-        }).then(stream => { video.srcObject = stream; });
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", aspectRatio: 1 } })
+            .then(stream => { document.getElementById('webcam').srcObject = stream; });
     }
 
-    function takeSnapshot() {
-        const video = document.getElementById('webcam');
-        const canvas = document.getElementById('canvas');
-        const context = canvas.getContext('2d');
-
-        canvas.width = 400; canvas.height = 400;
-        context.drawImage(video, 0, 0, 400, 400);
-
-        photoData = canvas.toDataURL('image/jpeg', 0.6);
-        video.classList.add('hidden');
-        canvas.classList.remove('hidden');
+    function handleCapture() {
+        playSound('click');
+        const v = document.getElementById('webcam');
+        const c = document.getElementById('canvas');
+        c.width = 400; c.height = 400;
+        c.getContext('2d').drawImage(v, 0, 0, 400, 400);
+        photo = c.toDataURL('image/jpeg', 0.5);
+        v.classList.add('hidden');
+        c.classList.remove('hidden');
         document.getElementById('snap-btn').innerText = "RE-SCAN";
         document.getElementById('reg-btn').classList.remove('hidden');
-        speak("Biometrics scanned. Proceed to finalize.");
     }
 
-    function submitData() {
-        const regBtn = document.getElementById('reg-btn');
-        regBtn.innerText = "UPLOADING...";
-        regBtn.disabled = true;
+    function handleFinalSubmit() {
+        playSound('success');
+        const btn = document.getElementById('reg-btn');
+        btn.innerText = "UPLOADING...";
+        btn.disabled = true;
 
         const params = {
-            player_name: document.getElementById('player-name').value,
-            player_age: document.getElementById('player-age').value,
-            id_number: generatedID,
-            player_photo: photoData,
+            player_name: document.getElementById('p-name').value,
+            player_age: document.getElementById('p-age').value,
+            id_number: pID,
+            player_photo: photo,
             to_email: 'refuerzojay7@gmail.com'
         };
 
         emailjs.send('service_lj9c0uo', 'template_3ctf45c', params)
             .then(() => {
-                speak("Registration successful. Good luck in the Project X {{id_number}}!;
-                location.reload();
+                document.getElementById('success-overlay').style.display = 'flex';
+                document.getElementById('final-msg').innerText = "WELCOME TO PROJECT X, " + pID;
+                speak("Registration Successful. Welcome to Project X, " + pID.split('').join(' '));
+                setTimeout(() => { location.reload(); }, 5000);
             });
     }
 </script>
