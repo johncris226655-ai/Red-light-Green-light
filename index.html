@@ -2,14 +2,16 @@
 <html lang="fil">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Entrance</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PROJECT X | SYSTEM ENTRANCE</title>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=JetBrains+Mono:wght@300&display=swap');
 
+        * { box-sizing: border-box; outline: none; }
+        
         body {
-            background-color: #050505;
+            background-color: #000;
             color: #e0e0e0;
             font-family: 'JetBrains+Mono', monospace;
             margin: 0;
@@ -17,145 +19,193 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            width: 100vw;
             overflow: hidden;
+            background-image: radial-gradient(circle, #1a0000 0%, #000 80%);
+        }
+
+        /* Glitch Animation for Title */
+        .glitch {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            letter-spacing: 8px;
+            color: #ff0000;
+            text-shadow: 2px 2px #550000;
+            animation: glitch-anim 3s infinite;
+        }
+
+        @keyframes glitch-anim {
+            0% { transform: translate(0); }
+            2% { transform: translate(-2px, 2px); }
+            4% { transform: translate(2px, -2px); }
+            6% { transform: translate(0); }
         }
 
         #main-container {
-            width: 85%;
-            max-width: 450px;
-            text-align: center;
-            border: 1px solid #222;
-            padding: 40px;
-            background: #0a0a0a;
-            box-shadow: 0 0 50px rgba(255, 0, 0, 0.1);
-            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            border: 1px solid #300;
+            background: rgba(5, 5, 5, 0.9);
+            box-shadow: inset 0 0 100px rgba(255, 0, 0, 0.1);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
-            letter-spacing: 6px;
-            color: #ff0000;
-            margin-bottom: 25px;
-            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        .screen {
+            width: 100%;
+            animation: fadeIn 1.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); filter: blur(5px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
         .instructions {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             line-height: 1.8;
-            color: #999;
-            margin-bottom: 30px;
+            color: #888;
+            margin: 25px 0;
             text-align: left;
-            border-left: 3px solid #ff0000;
-            padding-left: 15px;
-            background: rgba(255, 0, 0, 0.02);
+            border-left: 2px solid #ff0000;
+            padding: 15px;
+            background: rgba(255, 0, 0, 0.03);
         }
 
+        /* Form Styling */
+        input {
+            width: 100%;
+            background: #111;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 12px;
+            margin-bottom: 15px;
+            font-family: 'JetBrains+Mono';
+            text-align: center;
+            border-radius: 0;
+        }
+
+        input:focus { border-color: #ff0000; box-shadow: 0 0 10px rgba(255, 0, 0, 0.2); }
+
         button {
-            background: transparent;
+            background: #000;
             border: 1px solid #ff0000;
             color: #ff0000;
-            padding: 15px 20px;
+            padding: 18px;
             font-family: 'Orbitron', sans-serif;
             font-size: 0.9rem;
             cursor: pointer;
-            transition: all 0.4s ease;
+            transition: 0.3s;
             width: 100%;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            letter-spacing: 3px;
         }
 
-        button:hover {
-            background: #ff0000;
-            color: #fff;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
-        }
+        button:hover { background: #ff0000; color: #fff; box-shadow: 0 0 30px #ff0000; }
 
         video, canvas {
             width: 100%;
-            aspect-ratio: 1 / 1;
-            border: 1px solid #333;
-            margin: 20px 0;
+            aspect-ratio: 1/1;
+            border: 1px solid #ff0000;
+            margin: 15px 0;
             background: #000;
             object-fit: cover;
         }
 
         .id-display {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             color: #fff;
-            margin: 15px 0;
-            letter-spacing: 4px;
-            background: #111;
+            margin-bottom: 10px;
+            background: #1a1a1a;
             padding: 10px;
-            border: 1px dashed #444;
+            border: 1px dashed #555;
         }
 
-        .hidden { display: none; }
-
-        .processing {
-            pointer-events: none;
-            opacity: 0.6;
-            border-color: #555;
-            color: #555;
-        }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
 <div id="main-container">
-    <div id="welcome-screen">
-        <h1 id="title-header">PHASE ONE</h1>
+    <div id="welcome-screen" class="screen">
+        <h1 class="glitch">PROJECT X</h1>
         <div class="instructions">
-            [SYSTEM PROTOCOLS]:<br>
-            > PROVIDE CLEAR IDENTIFICATION.<br>
-            > 1:1 ASPECT RATIO PHOTO REQUIRED.<br>
-            > DATA WILL BE SENT TO ENCRYPTED SERVER.<br>
-            > ONCE REGISTERED, ACTION IS PERMANENT.
+            [PROTOCOLS]:<br>
+            > PROVIDE PERSONAL DATA.<br>
+            > CAPTURE 1:1 BIOMETRIC PHOTO.<br>
+            > REGISTRATION IS IRREVERSIBLE.
         </div>
-        <button onclick="startProcess()">GET YOUR ID</button>
+        <button onclick="enterFullScreen(); startRegistration();">ENTER SYSTEM</button>
     </div>
 
-    <div id="camera-section" class="hidden">
+    <div id="data-screen" class="screen hidden">
+        <h2 style="color: #ff0000; letter-spacing: 3px;">CITIZEN DATA</h2>
+        <input type="text" id="player-name" placeholder="FULL NAME" autocomplete="off">
+        <input type="number" id="player-age" placeholder="AGE" autocomplete="off">
+        <button onclick="startCamera()">NEXT: BIOMETRICS</button>
+    </div>
+
+    <div id="camera-section" class="screen hidden">
         <div class="id-display" id="id-num">ID: ------</div>
         <video id="webcam" autoplay playsinline></video>
         <canvas id="canvas" class="hidden"></canvas>
-        
-        <button id="snap-btn" onclick="takeSnapshot()">CAPTURE IMAGE</button>
-        <button id="reg-btn" class="hidden" onclick="submitData()">REGISTER YOUR ID</button>
+        <button id="snap-btn" onclick="takeSnapshot()">CAPTURE BIOMETRICS</button>
+        <button id="reg-btn" class="hidden" onclick="submitData()">FINALIZE REGISTRATION</button>
     </div>
 </div>
 
 <script>
-    // Initialize EmailJS
-    (function() {
-        emailjs.init("NCqicqr14H_Zg96b6");
-    })();
+    (function() { emailjs.init("NCqicqr14H_Zg96b6"); })();
 
     let generatedID = "";
     let photoData = "";
 
-    function startProcess() {
-        document.getElementById('welcome-screen').classList.add('hidden');
-        document.getElementById('camera-section').classList.remove('hidden');
+    // AI VOICE FUNCTION
+    function speak(text) {
+        const msg = new SpeechSynthesisUtterance();
+        msg.text = text;
+        msg.rate = 0.9;
+        msg.pitch = 0.8;
+        window.speechSynthesis.speak(msg);
+    }
 
-        // Generate Random ID
-        generatedID = "R-" + Math.floor(100000 + Math.random() * 900000);
+    function enterFullScreen() {
+        const elem = document.documentElement;
+        if (elem.requestFullscreen) elem.requestFullscreen();
+        else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+    }
+
+    function startRegistration() {
+        document.getElementById('welcome-screen').classList.add('hidden');
+        document.getElementById('data-screen').classList.remove('hidden');
+        speak("Welcome to Project X. Please enter your name and age.");
+    }
+
+    function startCamera() {
+        const name = document.getElementById('player-name').value;
+        const age = document.getElementById('player-age').value;
+
+        if(!name || !age) {
+            alert("System requires data.");
+            return;
+        }
+
+        document.getElementById('data-screen').classList.add('hidden');
+        document.getElementById('camera-section').classList.remove('hidden');
+        
+        generatedID = "X-" + Math.floor(100000 + Math.random() * 900000);
         document.getElementById('id-num').innerText = generatedID;
 
-        // Start Camera
+        speak("Citizenship ID generated. Provide clear identification photo.");
+
         const video = document.getElementById('webcam');
         navigator.mediaDevices.getUserMedia({ 
-            video: { 
-                facingMode: "user",
-                width: { ideal: 400 },
-                height: { ideal: 400 },
-                aspectRatio: 1 
-            } 
-        })
-        .then(stream => { video.srcObject = stream; })
-        .catch(err => { 
-            alert("SYSTEM ERROR: Camera access is mandatory."); 
-        });
+            video: { facingMode: "user", aspectRatio: 1 } 
+        }).then(stream => { video.srcObject = stream; });
     }
 
     function takeSnapshot() {
@@ -163,29 +213,25 @@
         const canvas = document.getElementById('canvas');
         const context = canvas.getContext('2d');
 
-        // Set size to 300x300 (Small enough for EmailJS limits)
-        canvas.width = 300;
-        canvas.height = 300;
-        context.drawImage(video, 0, 0, 300, 300);
+        canvas.width = 400; canvas.height = 400;
+        context.drawImage(video, 0, 0, 400, 400);
 
-        // Compress image to 50% quality
-        photoData = canvas.toDataURL('image/jpeg', 0.5); 
-        
+        photoData = canvas.toDataURL('image/jpeg', 0.6);
         video.classList.add('hidden');
         canvas.classList.remove('hidden');
-        document.getElementById('snap-btn').innerText = "RETAKE PHOTO";
+        document.getElementById('snap-btn').innerText = "RE-SCAN";
         document.getElementById('reg-btn').classList.remove('hidden');
+        speak("Biometrics scanned. Proceed to finalize.");
     }
 
     function submitData() {
         const regBtn = document.getElementById('reg-btn');
-        const snapBtn = document.getElementById('snap-btn');
-        
-        regBtn.innerText = "UPLOADING DATA...";
-        regBtn.classList.add('processing');
-        snapBtn.classList.add('hidden');
+        regBtn.innerText = "UPLOADING...";
+        regBtn.disabled = true;
 
         const params = {
+            player_name: document.getElementById('player-name').value,
+            player_age: document.getElementById('player-age').value,
             id_number: generatedID,
             player_photo: photoData,
             to_email: 'refuerzojay7@gmail.com'
@@ -193,21 +239,11 @@
 
         emailjs.send('service_lj9c0uo', 'template_3ctf45c', params)
             .then(() => {
-                regBtn.innerText = "SUCCESSFULLY REGISTERED";
-                setTimeout(() => {
-                    alert("ID REGISTERED. WELCOME TO THE SYSTEM.");
-                    location.reload();
-                }, 1000);
-            })
-            .catch((err) => {
-                console.error("FAILED:", err);
-                alert("UPLOAD FAILED. PLEASE CHECK YOUR CONNECTION.");
-                regBtn.innerText = "REGISTER YOUR ID";
-                regBtn.classList.remove('processing');
-                snapBtn.classList.remove('hidden');
+                speak("Registration successful. Good luck in the Borderland.");
+                alert("CITIZEN REGISTERED.");
+                location.reload();
             });
     }
 </script>
-
 </body>
 </html>
